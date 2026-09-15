@@ -23,6 +23,10 @@ function optionalTaskFields() {
           "title:form.title.trim(),frequency:",
           "title:form.title?.trim()||'sem título',frequency:"
         )
+        .replace(
+          "priority:form.priority,",
+          "priority:form.priority==='Alta'?'high':form.priority==='Baixa'?'low':'medium',"
+        )
     },
   }
 }
