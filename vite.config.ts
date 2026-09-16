@@ -5,28 +5,13 @@ function optionalTaskFields() {
   return {
     name: 'optional-task-fields',
     transform(code: string, id: string) {
-      if (!id.endsWith('/src/app.tsx')) return null
+      if (!id.replace(/\\/g, '/').endsWith('/src/app.tsx')) return null
       return code
-        .replace(
-          "if(!supabase||!session||!form.title?.trim())return;",
-          "if(!supabase||!session)return;"
-        )
-        .replace(
-          "title:form.title.trim(),",
-          "title:form.title?.trim()||'sem título',"
-        )
-        .replace(
-          "disabled={busy||!f.title.trim()}",
-          "disabled={busy}"
-        )
-        .replace(
-          "title:form.title.trim(),frequency:",
-          "title:form.title?.trim()||'sem título',frequency:"
-        )
-        .replace(
-          "priority:form.priority,",
-          "priority:form.priority==='Alta'?'high':form.priority==='Baixa'?'low':'medium',"
-        )
+        .replace(/if\(!supabase\|\|!session\|\|!form\.title\?\.trim\(\)\)return;/g, 'if(!supabase||!session)return;')
+        .replace(/title:form\.title\.trim\(\),/g, "title:form.title?.trim()||'sem título',")
+        .replace(/disabled=\{busy\|\|!f\.title\.trim\(\)\}/g, 'disabled={busy}')
+        .replace(/priority:form\.priority,/g, "priority:form.priority==='Alta'?'high':form.priority==='Baixa'?'low':'medium',")
+        .replace(/priority:\s*form\.priority\b/g, "priority:form.priority==='Alta'?'high':form.priority==='Baixa'?'low':'medium'")
     },
   }
 }
