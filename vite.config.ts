@@ -24,13 +24,36 @@ function appIntegrations() {
           "<button onClick={()=>setView('Calendário')} className={view==='Calendário'?'active':''}><CalendarDays/><span>calendário</span></button>",
           "<button onClick={()=>setView('Hábitos')} className={view==='Hábitos'?'active':''}><Check/><span>hábitos</span></button><button onClick={()=>setView('Calendário')} className={view==='Calendário'?'active':''}><CalendarDays/><span>calendário</span></button>",
         )
+        // Task deletion: keep the delete action inside the edit modal so it is
+        // available without changing the task list layout.
+        out = out.replace(
+          "async function toggleTask(t:Task){",
+          "async function deleteTask(t:Task){if(!supabase||!session)return;if(!confirm(`Excluir a tarefa “${t.title}”? Esta ação não pode ser desfeita.`))return;const r=await supabase.from('tasks').delete().eq('id',t.id).eq('owner_id',session.user.id);if(r.error)setError(r.error.message);else{setModal(null);setEditing(null);await load()}}\n async function toggleTask(t:Task){",
+        )
+        out = out.replace(
+          "onSave={saveTask} busy={busy}/>",
+          "onSave={saveTask} onDelete={deleteTask} busy={busy}/>",
+        )
+        // Add the optional prop to TaskModal and a danger action in its footer.
+        out = out.replace(
+          "function TaskModal({task,projects,initialTitle,onClose,onSave,busy}",
+          "function TaskModal({task,projects,initialTitle,onClose,onSave,onDelete,busy}",
+        )
+        out = out.replace(
+          ":{task:Task|null;projects:Project[];initialTitle?:string;onClose:()=>void;onSave:(f:any)=>void;busy:boolean})",
+          ":{task:Task|null;projects:Project[];initialTitle?:string;onClose:()=>void;onSave:(f:any)=>void;onDelete?:(t:Task)=>void;busy:boolean})",
+        )
+        out = out.replace(
+          "<div className=\"task-modal-actions\">",
+          "<div className=\"task-modal-actions\">{task&&onDelete&&<button type=\"button\" className=\"danger\" onClick={()=>onDelete(task)}><Trash2 size={15}/> excluir tarefa</button>}",
+        )
         return out
       }
       if (file.endsWith('/src/HabitsView.tsx')) {
         let out = code
         out = out.replace(
           "setHabits(h.data||[]);setLogs(l.data||[])",
-          "setHabits(h.data||[]);setLogs((l.data||[]).map(x=>{const hh=(h.data||[]).find(z=>z.id===x.habit_id);const unit=(hh?.unit||'').toLowerCase();const isMeasured=['quantity','duration','count'].includes(hh?.tracking_type);let value=Number(x.value)||0;if(['l','litro','litros'].includes(unit)&&value>Number(hh?.target||0))value=value/1000;return {...x,value,completed:isMeasured?value>=Number(hh?.target||0):x.completed}}))",
+          "setHabits(h.data||[]);setLogs((l.data||[]).map(x=>{const hh=(h.data||[]).find(z=>z.id===x.habit_id);const unit=(hh?.unit||'').toLowerCase();if(['l','litro','litros'].includes(unit)&&x.value>Number(hh?.target||0))return {...x,value:x.value/1000,completed:x.value/1000>=Number(hh?.target||0)};return x}))",
         )
         out = out.replace(
           "const payload={owner_id:session.user.id,habit_id:h.id,log_date:day,value:next,completed:next>=h.target};",
