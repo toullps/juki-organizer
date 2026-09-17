@@ -30,7 +30,7 @@ function appIntegrations() {
         let out = code
         out = out.replace(
           "setHabits(h.data||[]);setLogs(l.data||[])",
-          "setHabits(h.data||[]);setLogs((l.data||[]).map(x=>{const hh=(h.data||[]).find(z=>z.id===x.habit_id);const unit=(hh?.unit||'').toLowerCase();if(['l','litro','litros'].includes(unit)&&x.value>Number(hh?.target||0))return {...x,value:x.value/1000,completed:x.value/1000>=Number(hh?.target||0)};return x}))",
+          "setHabits(h.data||[]);setLogs((l.data||[]).map(x=>{const hh=(h.data||[]).find(z=>z.id===x.habit_id);const unit=(hh?.unit||'').toLowerCase();const isMeasured=['quantity','duration','count'].includes(hh?.tracking_type);let value=Number(x.value)||0;if(['l','litro','litros'].includes(unit)&&value>Number(hh?.target||0))value=value/1000;return {...x,value,completed:isMeasured?value>=Number(hh?.target||0):x.completed}}))",
         )
         out = out.replace(
           "const payload={owner_id:session.user.id,habit_id:h.id,log_date:day,value:next,completed:next>=h.target};",
