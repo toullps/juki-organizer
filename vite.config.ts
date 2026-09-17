@@ -36,6 +36,10 @@ function appIntegrations() {
           "const payload={owner_id:session.user.id,habit_id:h.id,log_date:day,value:next,completed:next>=h.target};",
           "const unit=h.unit.toLowerCase();const normalized=(['l','litro','litros'].includes(unit)&&next>=10)?next/1000:next;const payload={owner_id:session.user.id,habit_id:h.id,log_date:day,value:normalized,completed:normalized>=h.target};",
         )
+        out = out.replace(
+          "`${value} / ${h.target} ${h.unit}`",
+          "`${h.unit.toLowerCase()==='l'&&value<1?`${Math.round(value*1000)} ml`:value} / ${h.target} ${h.unit}`",
+        )
         return out
       }
       return null
