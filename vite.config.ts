@@ -5,25 +5,40 @@ function appIntegrations() {
   return {
     name: 'juki-app-integrations',
     transform(code: string, id: string) {
-      if (!id.replace(/\\/g, '/').endsWith('/src/app.tsx')) return null
-      let out = "import { HabitsView } from './HabitsView'\n" + code
-      out = out.replace(
-        "type View='Dashboard'|'Tarefas'|'Calendário'|'Projetos'|'Capturar'|'Páginas'|'Etiquetas'|'Metas'|'Templates'|'Configurações'",
-        "type View='Dashboard'|'Tarefas'|'Hábitos'|'Calendário'|'Projetos'|'Capturar'|'Páginas'|'Etiquetas'|'Metas'|'Templates'|'Configurações'",
-      )
-      out = out.replace(
-        "{view==='Calendário'&&<CalendarView date={calendarDate} setDate={setCalendarDate} tasks={visible} rules={rules} onToggle={toggle}/>}",
-        "{view==='Hábitos'&&<HabitsView session={session}/>} {view==='Calendário'&&<CalendarView date={calendarDate} setDate={setCalendarDate} tasks={visible} rules={rules} onToggle={toggle}/>}",
-      )
-      out = out.replace(
-        "[['Dashboard',<LayoutDashboard/>,'Dashboard'],['Tarefas',<Inbox/>,'Tarefas'],['Calendário',<CalendarDays/>,'Calendário']",
-        "[['Dashboard',<LayoutDashboard/>,'Dashboard'],['Tarefas',<Inbox/>,'Tarefas'],['Hábitos',<Check/>,'Hábitos'],['Calendário',<CalendarDays/>,'Calendário']",
-      )
-      out = out.replace(
-        "<button onClick={()=>setView('Calendário')} className={view==='Calendário'?'active':''}><CalendarDays/><span>calendário</span></button>",
-        "<button onClick={()=>setView('Hábitos')} className={view==='Hábitos'?'active':''}><Check/><span>hábitos</span></button><button onClick={()=>setView('Calendário')} className={view==='Calendário'?'active':''}><CalendarDays/><span>calendário</span></button>",
-      )
-      return out
+      const file = id.replace(/\\/g, '/')
+      if (file.endsWith('/src/app.tsx')) {
+        let out = "import { HabitsView } from './HabitsView'\n" + code
+        out = out.replace(
+          "type View='Dashboard'|'Tarefas'|'Calendário'|'Projetos'|'Capturar'|'Páginas'|'Etiquetas'|'Metas'|'Templates'|'Configurações'",
+          "type View='Dashboard'|'Tarefas'|'Hábitos'|'Calendário'|'Projetos'|'Capturar'|'Páginas'|'Etiquetas'|'Metas'|'Templates'|'Configurações'",
+        )
+        out = out.replace(
+          "{view==='Calendário'&&<CalendarView date={calendarDate} setDate={setCalendarDate} tasks={visible} rules={rules} onToggle={toggle}/>}",
+          "{view==='Hábitos'&&<HabitsView session={session}/>} {view==='Calendário'&&<CalendarView date={calendarDate} setDate={setCalendarDate} tasks={visible} rules={rules} onToggle={toggle}/>}",
+        )
+        out = out.replace(
+          "[['Dashboard',<LayoutDashboard/>,'Dashboard'],['Tarefas',<Inbox/>,'Tarefas'],['Calendário',<CalendarDays/>,'Calendário']",
+          "[['Dashboard',<LayoutDashboard/>,'Dashboard'],['Tarefas',<Inbox/>,'Tarefas'],['Hábitos',<Check/>,'Hábitos'],['Calendário',<CalendarDays/>,'Calendário']",
+        )
+        out = out.replace(
+          "<button onClick={()=>setView('Calendário')} className={view==='Calendário'?'active':''}><CalendarDays/><span>calendário</span></button>",
+          "<button onClick={()=>setView('Hábitos')} className={view==='Hábitos'?'active':''}><Check/><span>hábitos</span></button><button onClick={()=>setView('Calendário')} className={view==='Calendário'?'active':''}><CalendarDays/><span>calendário</span></button>",
+        )
+        return out
+      }
+      if (file.endsWith('/src/HabitsView.tsx')) {
+        let out = code
+        out = out.replace(
+          "setHabits(h.data||[]);setLogs(l.data||[])",
+          "setHabits(h.data||[]);setLogs((l.data||[]).map(x=>{const hh=(h.data||[]).find(z=>z.id===x.habit_id);const unit=(hh?.unit||'').toLowerCase();if(['l','litro','litros'].includes(unit)&&x.value>Number(hh?.target||0))return {...x,value:x.value/1000,completed:x.value/1000>=Number(hh?.target||0)};return x}))",
+        )
+        out = out.replace(
+          "const payload={owner_id:session.user.id,habit_id:h.id,log_date:day,value:next,completed:next>=h.target};",
+          "const unit=h.unit.toLowerCase();const normalized=(['l','litro','litros'].includes(unit)&&next>=10)?next/1000:next;const payload={owner_id:session.user.id,habit_id:h.id,log_date:day,value:normalized,completed:normalized>=h.target};",
+        )
+        return out
+      }
+      return null
     },
   }
 }
