@@ -7,7 +7,7 @@ function appIntegrations() {
     transform(code: string, id: string) {
       const file = id.replace(/\\/g, '/')
       if (file.endsWith('/src/app.tsx')) {
-        let out = "import { HabitsView } from './HabitsView'\n" + code
+        let out = "import { HabitsView } from './HabitsView'\nimport { Trash2 } from 'lucide-react'\n" + code
         out = out.replace(
           "type View='Dashboard'|'Tarefas'|'Calendário'|'Projetos'|'Capturar'|'Páginas'|'Etiquetas'|'Metas'|'Templates'|'Configurações'",
           "type View='Dashboard'|'Tarefas'|'Hábitos'|'Calendário'|'Projetos'|'Capturar'|'Páginas'|'Etiquetas'|'Metas'|'Templates'|'Configurações'",
@@ -24,17 +24,14 @@ function appIntegrations() {
           "<button onClick={()=>setView('Calendário')} className={view==='Calendário'?'active':''}><CalendarDays/><span>calendário</span></button>",
           "<button onClick={()=>setView('Hábitos')} className={view==='Hábitos'?'active':''}><Check/><span>hábitos</span></button><button onClick={()=>setView('Calendário')} className={view==='Calendário'?'active':''}><CalendarDays/><span>calendário</span></button>",
         )
-        // Task deletion: keep the delete action inside the edit modal so it is
-        // available without changing the task list layout.
         out = out.replace(
           "async function toggleTask(t:Task){",
-          "async function deleteTask(t:Task){if(!supabase||!session)return;if(!confirm(`Excluir a tarefa “${t.title}”? Esta ação não pode ser desfeita.`))return;const r=await supabase.from('tasks').delete().eq('id',t.id).eq('owner_id',session.user.id);if(r.error)setError(r.error.message);else{setModal(null);setEditing(null);await load()}}\n async function toggleTask(t:Task){",
+          "async function deleteTask(t:Task){if(!supabase||!session)return;if(!confirm(`Excluir a tarefa “${t.title}”? Esta ação não pode ser desfeita.`))return;const r=await supabase.from('tasks').delete().eq('id',t.id).eq('owner_id',session.user.id);if(r.error)setError(r.error.message);else{setModal(null);setEditing(null);await load()}}\n async function deleteHabit(h:Habit){if(!supabase||!session)return;if(!confirm(`Excluir o hábito “${h.name}”? Esta ação não pode ser desfeita.`))return;const r=await supabase.from('habits').update({active:false}).eq('id',h.id).eq('owner_id',session.user.id);if(r.error)setError(r.error.message);else{setModal(null);setEditingHabit(null);await load()}}\n async function toggleTask(t:Task){",
         )
         out = out.replace(
-          "onSave={saveTask} busy={busy}/>",
+          "onSave={saveTask} onDelete={deleteTask} busy={busy}/>",
           "onSave={saveTask} onDelete={deleteTask} busy={busy}/>",
         )
-        // Add the optional prop to TaskModal and a danger action in its footer.
         out = out.replace(
           "function TaskModal({task,projects,initialTitle,onClose,onSave,busy}",
           "function TaskModal({task,projects,initialTitle,onClose,onSave,onDelete,busy}",
@@ -45,7 +42,23 @@ function appIntegrations() {
         )
         out = out.replace(
           "<div className=\"task-modal-actions\">",
-          "<div className=\"task-modal-actions\">{task&&onDelete&&<button type=\"button\" className=\"danger\" onClick={()=>onDelete(task)}><Trash2 size={15}/> excluir tarefa</button>}",
+          "<div className=\"task-modal-actions\">{task&&onDelete&&<button type=\"button\" onClick={()=>onDelete(task)} style={{border:'1px solid #ead8dd',background:'#fff6f7',color:'#b45d70',borderRadius:12,padding:'11px 14px',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:6,marginRight:'auto'}}><Trash2 size={15}/> excluir tarefa</button>}",
+        )
+        out = out.replace(
+          "onSave={saveHabit} busy={busy}/>",
+          "onSave={saveHabit} onDelete={deleteHabit} busy={busy}/>",
+        )
+        out = out.replace(
+          "function HabitModal({habit,onClose,onSave,busy}",
+          "function HabitModal({habit,onClose,onSave,onDelete,busy}",
+        )
+        out = out.replace(
+          ":{habit:Habit|null;onClose:()=>void;onSave:(f:any)=>void;busy:boolean})",
+          ":{habit:Habit|null;onClose:()=>void;onSave:(f:any)=>void;onDelete?:(h:Habit)=>void;busy:boolean})",
+        )
+        out = out.replace(
+          "<div className=\"habit-modal-actions\">",
+          "<div className=\"habit-modal-actions\">{habit&&onDelete&&<button type=\"button\" onClick={()=>onDelete(habit)} style={{border:'1px solid #ead8dd',background:'#fff6f7',color:'#b45d70',borderRadius:12,padding:'11px 14px',cursor:'pointer',display:'inline-flex',alignItems:'center',gap:6,marginRight:'auto'}}><Trash2 size={15}/> excluir hábito</button>}",
         )
         return out
       }
