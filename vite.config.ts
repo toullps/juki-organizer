@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 function appIntegrations() {
   return {
     name: 'juki-app-integrations',
+    enforce: 'pre' as const,
     transform(code: string, id: string) {
       const file = id.replace(/\\/g, '/')
       if (file.endsWith('/src/app.tsx')) {
