@@ -48,3 +48,17 @@ create policy finance_debt_payments_owner on public.finance_debt_payments for al
  ));
 -- IMPORTANT: server-side validation for aggregate payment <= original debt
 -- is required before allowing concurrent writes in production.
+
+create table if not exists public.planner_notes (
+ id uuid primary key default gen_random_uuid(),
+ owner_id uuid not null references auth.users(id) on delete cascade,
+ title text not null default 'sem título',
+ body text not null default '',
+ note_date date,
+ created_at timestamptz not null default now(),
+ updated_at timestamptz not null default now()
+);
+create index if not exists planner_notes_owner_updated_idx on public.planner_notes(owner_id,updated_at desc);
+alter table public.planner_notes enable row level security;
+create policy planner_notes_owner on public.planner_notes for all to authenticated
+ using ((select auth.uid()) = owner_id) with check ((select auth.uid()) = owner_id);
