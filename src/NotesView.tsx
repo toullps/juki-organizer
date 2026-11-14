@@ -1,0 +1,18 @@
+import React,{useEffect,useState} from 'react'
+import { BookOpen, Plus, Save, Trash2 } from 'lucide-react'
+import { supabase } from './supabase'
+
+type Note={id:string;title:string;body:string;note_date:string|null;updated_at:string}
+export function NotesView({userId}:{userId:string}){
+ const [notes,setNotes]=useState<Note[]>([]),[selected,setSelected]=useState<string|null>(null),[title,setTitle]=useState(''),[body,setBody]=useState(''),[date,setDate]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState(''),[loading,setLoading]=useState(true)
+ async function load(){if(!supabase)return;setLoading(true);const r=await supabase.from('planner_notes').select('*').eq('owner_id',userId).order('updated_at',{ascending:false});if(r.error)setError('Anotações indisponíveis. Verifique a migração do Supabase.');else{setError('');setNotes(r.data||[])}setLoading(false)}
+ useEffect(()=>{void load()},[userId])
+ const choose=(n:Note)=>{setSelected(n.id);setTitle(n.title);setBody(n.body);setDate(n.note_date||'');setError('')}
+ const fresh=()=>{setSelected(null);setTitle('');setBody('');setDate('');setError('')}
+ async function save(){if(!supabase)return;if(!title.trim()&&!body.trim()){setError('Escreva um título ou uma anotação.');return}setBusy(true);const data={owner_id:userId,title:title.trim()||'sem título',body,note_date:date||null,updated_at:new Date().toISOString()};const r=selected?await supabase.from('planner_notes').update(data).eq('id',selected).eq('owner_id',userId):await supabase.from('planner_notes').insert(data).select('id').single();setBusy(false);if(r.error)setError(r.error.message);else{const id=selected||r.data?.id;await load();setSelected(id||null);setError('')}}
+ async function remove(){if(!supabase||!selected||!window.confirm('Excluir esta anotação?'))return;setBusy(true);const r=await supabase.from('planner_notes').delete().eq('id',selected).eq('owner_id',userId);setBusy(false);if(r.error)setError(r.error.message);else {fresh();await load()}}
+ return <div className="notes-page"><div className="page-head"><div><p className="eyebrow">meu espaço de ideias</p><h1>caderno<span className="editorial-period">.</span></h1><p>anotações, pensamentos e planos para guardar.</p></div><button className="primary" onClick={fresh}><Plus size={16}/> nova nota</button></div>
+  <div className="notes-layout"><aside className="panel notes-list"><div className="section-title"><h2>minhas páginas</h2><BookOpen size={16}/></div>{loading?<p>carregando...</p>:notes.length===0?<p className="notes-empty">seu caderno está em branco. comece uma página!</p>:notes.map(n=><button key={n.id} className={'notes-entry '+(selected===n.id?'active':'')} onClick={()=>choose(n)}><b>{n.title}</b><small>{n.note_date?new Date(n.note_date+'T12:00:00').toLocaleDateString('pt-BR'):new Date(n.updated_at).toLocaleDateString('pt-BR')}</small></button>)}</aside>
+  <section className="panel notes-editor"><p className="eyebrow">uma página de cada vez / juki°</p><label>título<input value={title} onChange={e=>setTitle(e.target.value)} placeholder="o que está na sua cabeça?"/></label><label>data (opcional)<input type="date" value={date} onChange={e=>setDate(e.target.value)}/></label><label>minhas anotações<textarea value={body} onChange={e=>setBody(e.target.value)} placeholder="escreva livremente..." rows={14}/></label>{error&&<p className="error-banner" role="alert">{error}</p>}<div className="notes-actions"><button className="primary" onClick={save} disabled={busy}><Save size={16}/>{busy?'salvando...':'salvar página'}</button>{selected&&<button className="ghost" onClick={remove} disabled={busy}><Trash2 size={16}/> excluir</button>}</div></section></div>
+ </div>
+}
