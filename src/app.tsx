@@ -4,6 +4,7 @@ import { CalendarDays, Check, ChevronLeft, ChevronRight, CirclePlus, Clock3, Fol
 import { supabase } from './supabase'
 import { FinanceView } from './FinanceView'
 import './styles.css'
+import './editorial.css'
 
 type Project={id:string;name:string;color:string;description?:string|null}
 type Task={id:string;title:string;description?:string|null;project_id:string|null;project?:Project|null;priority:string;status:string;completed_at:string|null;due_date:string|null;due_time:string|null;estimated_minutes?:number|null;recurrence_rule_id?:string|null;archived_at?:string|null}
