@@ -26,7 +26,7 @@
 .agenda-date { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; padding: 4px 6px; border: 0; border-radius: 7px; color: var(--ink); background: transparent; font-size: 13px; }
 .agenda-date:hover { background: var(--surface-soft); }
 .agenda-date b { min-width: 29px; height: 29px; display: grid; place-items: center; border-radius: 50%; font-weight: 600; }
-.agenda-date[aria-current="date"] b { color: white; background: var(--accent); }
+.agenda-date[aria-current="date"] b { color: var(--accent-ink); background: var(--accent-fill); }
 .agenda-date span { color: var(--muted); font-size: 11px; }
 .agenda-flexible { position: sticky; top: var(--agenda-heading); z-index: 3; min-height: 47px; border-bottom: 1px solid var(--line-strong); background: var(--surface); }
 .agenda-flexible > .agenda-gutter { display: grid; place-items: center; padding: 4px; color: var(--muted); font-size: 10px; line-height: 1.25; text-align: center; }

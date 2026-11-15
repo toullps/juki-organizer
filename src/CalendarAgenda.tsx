@@ -3,6 +3,7 @@ import { Check, ChevronLeft, ChevronRight, Plus, Repeat2 } from 'lucide-react'
 import type { Rule, Task } from './app'
 import { addDays, calendarLayout, isoDate, moveMonth, startWeek } from './calendarLayout'
 import { timeRange } from './taskTime'
+import { occursOn } from './recurrence'
 
 type Mode = 'day' | 'week' | 'month'
 type AgendaItem = { task: Task; projected?: boolean }
@@ -21,27 +22,15 @@ const fullDate = new Intl.DateTimeFormat('pt-BR', { weekday: 'long', day: 'numer
 const monthName = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' })
 const shortDate = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short' })
 const minutesPerDay = 1440
-const utcDay = (date: Date) => Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-
-function matchesRule(rule: Rule, day: Date, key: string) {
-  if (!rule.active || !rule.start_date || key < rule.start_date || (rule.end_date && key > rule.end_date)) return false
-  const start = new Date(`${rule.start_date}T12:00:00`)
-  const elapsed = (utcDay(day) - utcDay(start)) / 86400000
-  const interval = Math.max(1, rule.interval_value)
-
-  if (rule.weekdays?.includes(day.getDay())) return true
-  switch (rule.frequency) {
-    case 'days': return elapsed % interval === 0
-    case 'weeks': return elapsed % (7 * interval) === 0
-    case 'months': return day.getDate() === (rule.day_of_month || start.getDate())
-    case 'years': return day.getMonth() === start.getMonth() && day.getDate() === start.getDate()
-    default: return false
-  }
-}
-
 function itemsByDay(days: Date[], tasks: Task[], rules: Rule[]) {
   const scheduled = new Map<string, Task[]>()
+  const series = new Map<string, Task[]>()
   for (const task of tasks) {
+    if (task.recurrence_rule_id) {
+      const linked = series.get(task.recurrence_rule_id) ?? []
+      linked.unshift(task)
+      series.set(task.recurrence_rule_id, linked)
+    }
     if (!task.due_date) continue
     const onDate = scheduled.get(task.due_date) ?? []
     onDate.push(task)
@@ -53,9 +42,9 @@ function itemsByDay(days: Date[], tasks: Task[], rules: Rule[]) {
     const saved = scheduled.get(key) ?? []
     const items: AgendaItem[] = saved.map(task => ({ task }))
     for (const rule of rules) {
-      if (!matchesRule(rule, date, key) || saved.some(task => task.recurrence_rule_id === rule.id)) continue
-      const template = tasks.find(task => task.recurrence_rule_id === rule.id)
-        ?? tasks.find(task => task.title === rule.title)
+      if (!occursOn(rule, key) || saved.some(task => task.recurrence_rule_id === rule.id)) continue
+      const linked = series.get(rule.id)
+      const template = linked?.find(task => !!task.due_date && task.due_date <= key) ?? (linked && linked[linked.length - 1])
       if (template) {
         items.push({ task: { ...template, id: `virtual-${rule.id}-${key}`, due_date: key }, projected: true })
       }
