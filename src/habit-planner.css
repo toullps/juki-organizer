@@ -1,0 +1,65 @@
+.habit-planner { width: 100%; max-width: 790px; margin-inline: auto; }
+.habit-planner .page-head { align-items: center; }
+.habit-planner .page-head p::first-letter { text-transform: uppercase; }
+.habit-planner-week {
+  display: grid;
+  gap: 12px;
+  padding: 13px 16px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface);
+}
+.habit-planner-week-header, .habit-planner-status { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 13px; }
+.habit-planner-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.habit-planner-days button { display: grid; place-content: center; gap: 2px; min-height: 54px; padding: 3px; border: 1px solid transparent; border-radius: 7px; background: var(--surface-soft); color: var(--ink); }
+.habit-planner-days button:hover { border-color: var(--line-strong); }
+.habit-planner-days button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent-text); background: var(--accent-soft); }
+.habit-planner-days button[aria-current="date"] b { text-decoration: underline; text-underline-offset: 3px; }
+.habit-planner-days button span { font-size: 11px; }
+.habit-planner-days button b { font-size: 16px; font-variant-numeric: tabular-nums; }
+.habit-planner progress { appearance: none; border: 0; border-radius: 99px; height: 5px; background: var(--surface-soft); color: var(--accent); overflow: hidden; }
+.habit-planner progress::-webkit-progress-bar { background: var(--surface-soft); }
+.habit-planner progress::-webkit-progress-value { background: var(--accent); border-radius: 99px; }
+.habit-planner progress::-moz-progress-bar { background: var(--accent); border-radius: 99px; }
+.habit-planner-status progress { width: min(44%, 210px); }
+.habit-planner-group { margin-top: 23px; }
+.habit-planner-group h2, .habit-planner-group summary { margin: 0; padding: 0 0 8px; border-bottom: 1px solid var(--line); color: var(--ink); font-size: 15px; font-weight: 600; }
+.habit-planner-group summary { cursor: pointer; }
+.habit-planner-group summary span { margin-left: 4px; color: var(--muted); font-size: 12px; }
+.habit-planner-group ul { list-style: none; margin: 0; padding: 0; }
+.habit-planner-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.habit-planner-copy { min-width: 0; }
+.habit-planner-copy b { display: block; color: var(--ink); font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+.habit-planner-copy small, .habit-planner-copy p, .habit-planner-measure { margin: 3px 0 0; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.habit-planner-copy small svg { vertical-align: -2px; margin-right: 3px; }
+.habit-planner-measure { display: flex; flex-wrap: wrap; align-items: center; column-gap: 8px; }
+.habit-planner-measure progress { width: min(120px, 45%); }
+.habit-planner-row-actions { display: flex; align-items: center; gap: 5px; }
+.habit-mark, .habit-planner-row-actions .icon-button {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink-soft);
+}
+.habit-mark:hover, .habit-mark[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-text); }
+.habit-mark[aria-pressed="false"] svg { opacity: .55; }
+.habit-recorded { margin: 0 8px; color: var(--accent-text); }
+.habit-planner-empty { padding: 19px 0; color: var(--muted); font-size: 13px; }
+.habit-weekday-field { min-width: 0; margin: 0 0 12px; padding: 8px; border: 1px solid var(--line); border-radius: 8px; }
+.habit-weekday-field legend, .habit-weekday-field p { margin: 0; padding: 0 3px; color: var(--muted); font-size: 12px; }
+.habit-weekday-field > div { display: flex; flex-wrap: wrap; gap: 4px; }
+.modal .habit-weekday-field label { display: flex; align-items: center; min-height: 44px; gap: 4px; margin: 0; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; }
+.habit-weekday-field label:has(input:checked) { color: var(--accent-text); border-color: var(--accent); background: var(--accent-soft); }
+.habit-weekday-field input { margin: 0; accent-color: var(--accent); }
+@media (max-width: 720px) {
+  .habit-planner .page-head { align-items: flex-start; }
+  .habit-planner-week { padding: 10px; }
+  .habit-planner-row { gap: 8px; }
+  .habit-planner-row-actions { gap: 3px; }
+  .habit-mark, .habit-planner-row-actions .icon-button { width: 44px; height: 44px; }
+}

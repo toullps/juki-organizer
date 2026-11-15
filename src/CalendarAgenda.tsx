@@ -1,20 +1,29 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Check, ChevronLeft, ChevronRight, Plus, Repeat2 } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Flame, Plus, Repeat2 } from 'lucide-react'
 import type { Rule, Task } from './app'
 import { addDays, calendarLayout, isoDate, moveMonth, startWeek } from './calendarLayout'
 import { timeRange } from './taskTime'
 import { occursOn } from './recurrence'
+import { habitOccursOn, type Habit, type HabitLog } from './habitSchedule'
 
 type Mode = 'day' | 'week' | 'month'
-type AgendaItem = { task: Task; projected?: boolean }
+type TaskEntry = { kind: 'task'; id: string; task: Task; projected?: boolean }
+type HabitEntry = { kind: 'habit'; id: string; habit: Habit; completed: boolean }
+type AgendaItem = TaskEntry | HabitEntry
+
+type EditCallbacks = {
+  onEdit: (task: Task) => void
+  onEditHabit: (habit: Habit) => void
+}
 type AgendaProps = {
   date: Date
   setDate: (date: Date) => void
   tasks: Task[]
   rules: Rule[]
-  onEdit: (task: Task) => void
+  habits: Habit[]
+  logs: HabitLog[]
   onNew: (date: string) => void
-}
+} & EditCallbacks
 
 const views = { day: 'Dia', week: 'Semana', month: 'Mês' } as const
 const weekdays = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom']
@@ -22,7 +31,8 @@ const fullDate = new Intl.DateTimeFormat('pt-BR', { weekday: 'long', day: 'numer
 const monthName = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' })
 const shortDate = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'short' })
 const minutesPerDay = 1440
-function itemsByDay(days: Date[], tasks: Task[], rules: Rule[]) {
+function itemsByDay(days: Date[], tasks: Task[], rules: Rule[], habits: Habit[], logs: HabitLog[]) {
+  const logByDay = new Map(logs.map(log => [`${log.log_date}:${log.habit_id}`, log]))
   const scheduled = new Map<string, Task[]>()
   const series = new Map<string, Task[]>()
   for (const task of tasks) {
@@ -40,14 +50,19 @@ function itemsByDay(days: Date[], tasks: Task[], rules: Rule[]) {
   return days.map(date => {
     const key = isoDate(date)
     const saved = scheduled.get(key) ?? []
-    const items: AgendaItem[] = saved.map(task => ({ task }))
+    const items: AgendaItem[] = saved.map(task => ({ kind: 'task', id: task.id, task }))
     for (const rule of rules) {
       if (!occursOn(rule, key) || saved.some(task => task.recurrence_rule_id === rule.id)) continue
       const linked = series.get(rule.id)
       const template = linked?.find(task => !!task.due_date && task.due_date <= key) ?? (linked && linked[linked.length - 1])
       if (template) {
-        items.push({ task: { ...template, id: `virtual-${rule.id}-${key}`, due_date: key }, projected: true })
+        items.push({ kind: 'task', id: `virtual-${rule.id}-${key}`, task: { ...template, due_date: key }, projected: true })
       }
+    }
+    for (const habit of habits) {
+      const log = logByDay.get(`${key}:${habit.id}`)
+      if (!habitOccursOn(habit, date) && !log) continue
+      items.push({ kind: 'habit', id: `habit-${habit.id}`, habit, completed: !!log?.completed })
     }
     return { date, key, items }
   })
@@ -64,12 +79,12 @@ function visibleDates(date: Date, mode: Mode) {
   return Array.from({ length: count }, (_, index) => addDays(start, index))
 }
 
-export function CalendarAgenda({ date, setDate, tasks, rules, onEdit, onNew }: AgendaProps) {
+export function CalendarAgenda({ date, setDate, tasks, rules, habits, logs, onEdit, onEditHabit, onNew }: AgendaProps) {
   const [mode, setMode] = useState<Mode>(() => window.matchMedia('(max-width: 720px)').matches ? 'day' : 'week')
-  const days = useMemo(() => itemsByDay(visibleDates(date, mode), tasks, rules), [date, mode, tasks, rules])
+  const days = useMemo(() => itemsByDay(visibleDates(date, mode), tasks, rules, habits, logs), [date, mode, tasks, rules, habits, logs])
   const today = isoDate(new Date())
-  const total = days.reduce((count, day) => count + day.items.length, 0)
-  const hasForecast = days.some(day => day.items.some(item => item.projected))
+  const counts = itemCount(days.flatMap(day => day.items))
+  const hasForecast = days.some(day => day.items.some(item => item.kind === 'task' && item.projected))
   const title = mode === 'day' ? fullDate.format(date) : monthName.format(date)
   const range = mode === 'week' ? `${shortDate.format(days[0].date)} – ${shortDate.format(days[6].date)}` : ''
 
@@ -87,7 +102,7 @@ export function CalendarAgenda({ date, setDate, tasks, rules, onEdit, onNew }: A
       <div className="agenda-heading">
         <p>Agenda</p>
         <h1>{title}</h1>
-        <span aria-live="polite">{range && `${range} · `}{total} {total === 1 ? 'tarefa' : 'tarefas'}</span>
+        <span aria-live="polite">{range && `${range} · `}{counts.label}</span>
       </div>
       <div className="agenda-actions">
         <div className="agenda-navigation" role="group" aria-label="Navegação do calendário">
@@ -104,18 +119,40 @@ export function CalendarAgenda({ date, setDate, tasks, rules, onEdit, onNew }: A
       )}
     </div>
     {mode === 'month'
-      ? <MonthAgenda days={days} today={today} onOpenDay={openDay} onEdit={onEdit}/>
-      : <TimelineAgenda key={`${mode}-${days[0].key}`} mode={mode} days={days} today={today} onOpenDay={openDay} onEdit={onEdit}/>}
+      ? <MonthAgenda days={days} today={today} onOpenDay={openDay} onEdit={onEdit} onEditHabit={onEditHabit}/>
+      : <TimelineAgenda key={`${mode}-${days[0].key}`} mode={mode} days={days} today={today} onOpenDay={openDay} onEdit={onEdit} onEditHabit={onEditHabit}/>}
     {hasForecast && <p className="agenda-forecast"><Repeat2 size={15}/> Previsões de tarefas recorrentes aparecem com contorno tracejado.</p>}
   </section>
 }
 
-function AgendaTask({ item, onEdit, className = '', style }: {
+function itemCount(items: AgendaItem[]) {
+  const habits = items.filter(item => item.kind === 'habit').length
+  const tasks = items.length - habits
+  const taskLabel = `${tasks} ${tasks === 1 ? 'tarefa' : 'tarefas'}`
+  const habitLabel = `${habits} ${habits === 1 ? 'hábito' : 'hábitos'}`
+  return { tasks, habits, taskLabel, habitLabel, label: habits ? (tasks ? `${taskLabel} · ${habitLabel}` : habitLabel) : taskLabel }
+}
+
+function itemTime(item: AgendaItem) {
+  return item.kind === 'habit' ? item.habit.time : item.task.due_time
+}
+
+function AgendaEvent({ item, onEdit, onEditHabit, className = '', style }: EditCallbacks & {
   item: AgendaItem
-  onEdit: AgendaProps['onEdit']
   className?: string
   style?: React.CSSProperties
 }) {
+  if (item.kind === 'habit') {
+    const { habit, completed } = item
+    const time = habit.time?.slice(0, 5)
+    const label = ['Hábito', habit.name, time, completed && 'Concluído'].filter(Boolean).join(' · ')
+    return <button type="button" className={`agenda-habit ${className}${completed ? ' is-complete' : ''}`} style={style} title={label} aria-label={label} onClick={() => onEditHabit(habit)}>
+      <Flame size={13} aria-hidden="true"/>
+      <span>{habit.name}</span>
+      {time && <small>{time}</small>}
+      {completed && <Check size={12} aria-hidden="true"/>}
+    </button>
+  }
   const { task, projected } = item
   const time = timeRange(task)
   const forecast = projected ? 'Previsão de tarefa recorrente' : ''
@@ -130,20 +167,24 @@ function AgendaTask({ item, onEdit, className = '', style }: {
   return <button type="button" className={classes} style={style} onClick={() => onEdit(task)} title={label} aria-label={label}>{content}</button>
 }
 
-function TimelineAgenda({ mode, days, today, onOpenDay, onEdit }: {
+function TimelineAgenda({ mode, days, today, onOpenDay, onEdit, onEditHabit }: EditCallbacks & {
   mode: 'day' | 'week'
   days: AgendaDay[]
   today: string
   onOpenDay: (day: Date) => void
-  onEdit: AgendaProps['onEdit']
 }) {
   const viewport = useRef<HTMLDivElement>(null)
   const body = useRef<HTMLDivElement>(null)
   const initialScroll = useRef<number | null>(null)
   const schedules = days.map(day => ({
     ...day,
-    timed: calendarLayout(day.items.map(item => ({ ...item, due_time: item.task.due_time, estimated_minutes: item.task.estimated_minutes }))),
-    flexible: day.items.filter(item => !item.task.due_time),
+    timed: calendarLayout(day.items.map(item => ({
+      item, due_time: itemTime(item),
+      // A habit has a start time; reserve room for its marker without presenting a duration.
+      estimated_minutes: item.kind === 'habit' ? 24 : item.task.estimated_minutes,
+    }))),
+    unscheduledTasks: day.items.filter(item => item.kind === 'task' && !itemTime(item)),
+    unscheduledHabits: day.items.filter(item => item.kind === 'habit' && !itemTime(item)),
   }))
   const first = Math.min(...schedules.flatMap(day => day.timed.map(event => event.start)))
   const startHour = Number.isFinite(first) ? Math.max(0, Math.floor(first / 60) - 1) : 8
@@ -168,8 +209,12 @@ function TimelineAgenda({ mode, days, today, onOpenDay, onEdit }: {
       <div className="agenda-flexible agenda-columns">
         <div className="agenda-gutter"><span>Sem<br/>horário</span></div>
         {schedules.map(day => <div className="agenda-flexible-day" key={day.key}>
-          {day.flexible.map(item => <AgendaTask key={item.task.id} item={item} onEdit={onEdit}/>)}
-          {!day.flexible.length && mode === 'day' && <span className="agenda-flexible-empty">Nenhuma tarefa sem horário</span>}
+          {day.unscheduledTasks.map(item => <AgendaEvent key={item.id} item={item} onEdit={onEdit} onEditHabit={onEditHabit}/>)}
+          {!!day.unscheduledHabits.length && <div className="agenda-flexible-habits" role="group" aria-label="Hábitos sem horário">
+            <span>Hábitos</span>
+            {day.unscheduledHabits.map(item => <AgendaEvent key={item.id} item={item} onEdit={onEdit} onEditHabit={onEditHabit}/>)}
+          </div>}
+          {!day.unscheduledTasks.length && !day.unscheduledHabits.length && mode === 'day' && <span className="agenda-flexible-empty">Nada sem horário para este dia</span>}
         </div>)}
       </div>
       <div className="agenda-hours agenda-columns" ref={body}>
@@ -177,10 +222,11 @@ function TimelineAgenda({ mode, days, today, onOpenDay, onEdit }: {
           {Array.from({ length: 24 }, (_, hour) => <span key={hour}>{String(hour).padStart(2, '0')}:00</span>)}
         </div>
         {schedules.map(day => <div className="agenda-hour-column" key={day.key}>
-          {day.timed.map(({ task: item, start, end, column, columns }) => <AgendaTask
-            key={item.task.id}
+          {day.timed.map(({ task: { item }, start, end, column, columns }) => <AgendaEvent
+            key={item.id}
             item={item}
             onEdit={onEdit}
+            onEditHabit={onEditHabit}
             className={`agenda-timed${end - start < 40 ? ' agenda-short' : ''}`}
             style={{
               top: `${start / minutesPerDay * 100}%`,
@@ -195,11 +241,10 @@ function TimelineAgenda({ mode, days, today, onOpenDay, onEdit }: {
   </div>
 }
 
-function MonthAgenda({ days, today, onOpenDay, onEdit }: {
+function MonthAgenda({ days, today, onOpenDay, onEdit, onEditHabit }: EditCallbacks & {
   days: AgendaDay[]
   today: string
   onOpenDay: (day: Date) => void
-  onEdit: AgendaProps['onEdit']
 }) {
   const offset = (days[0].date.getDay() + 6) % 7
   const length = Math.ceil((offset + days.length) / 7) * 7
@@ -209,15 +254,22 @@ function MonthAgenda({ days, today, onOpenDay, onEdit }: {
       {Array.from({ length }, (_, index) => {
         const day = days[index - offset]
         if (!day) return <div className="agenda-cell is-outside" key={index} aria-hidden="true"/>
-        const count = day.items.length
+        const counts = itemCount(day.items)
+        const shown = counts.habits
+          ? [...day.items.filter(item => item.kind === 'task').slice(0, 2), ...day.items.filter(item => item.kind === 'habit')].slice(0, 3)
+          : day.items.slice(0, 3)
+        const remaining = day.items.length - shown.length
         return <div className="agenda-cell" key={day.key}>
-          <button className="agenda-date" aria-current={day.key === today ? 'date' : undefined} aria-label={`${fullDate.format(day.date)} · ${count} ${count === 1 ? 'tarefa' : 'tarefas'}`} onClick={() => onOpenDay(day.date)}>
+          <button className="agenda-date" aria-current={day.key === today ? 'date' : undefined} aria-label={`${fullDate.format(day.date)} · ${counts.label}`} onClick={() => onOpenDay(day.date)}>
             <b>{day.date.getDate()}</b>
-            {!!count && <span className="agenda-month-count" aria-hidden="true">{count}</span>}
+            <span className="agenda-month-counts" aria-hidden="true">
+              {!!counts.tasks && <span>{counts.tasks}</span>}
+              {!!counts.habits && <span className="agenda-month-habit-count"><Flame size={11}/>{counts.habits}</span>}
+            </span>
           </button>
           <div className="agenda-month-tasks">
-            {day.items.slice(0, 3).map(item => <AgendaTask key={item.task.id} item={item} onEdit={onEdit}/>)}
-            {count > 3 && <button className="agenda-more" onClick={() => onOpenDay(day.date)}>+{count - 3} {count === 4 ? 'tarefa' : 'tarefas'}</button>}
+            {shown.map(item => <AgendaEvent key={item.id} item={item} onEdit={onEdit} onEditHabit={onEditHabit}/>)}
+            {remaining > 0 && <button className="agenda-more" onClick={() => onOpenDay(day.date)}>+{remaining} {remaining === 1 ? 'item' : 'itens'}</button>}
           </div>
         </div>
       })}
