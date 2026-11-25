@@ -98,25 +98,25 @@ export function CalendarAgenda({ date, setDate, tasks, rules, habits, logs, onEd
   }
 
   return <section className="agenda" aria-label="Agenda">
-    <header className="agenda-toolbar">
+    <header className="agenda-toolbar page-head">
       <div className="agenda-heading">
-        <p>Agenda</p>
+        <p className="eyebrow">agenda</p>
         <h1>{title}</h1>
-        <span aria-live="polite">{range && `${range} · `}{counts.label}</span>
+        <p aria-live="polite">{range && `${range} · `}{counts.label}</p>
       </div>
-      <div className="agenda-actions">
-        <div className="agenda-navigation" role="group" aria-label="Navegação do calendário">
-          <button className="icon-button soft" aria-label="Período anterior" onClick={() => navigate(-1)}><ChevronLeft size={17}/></button>
-          <button className="today-btn" onClick={() => setDate(new Date())}>Hoje</button>
-          <button className="icon-button soft" aria-label="Próximo período" onClick={() => navigate(1)}><ChevronRight size={17}/></button>
-        </div>
-        <button className="primary" aria-label={`Nova tarefa para ${fullDate.format(date)}`} onClick={() => onNew(isoDate(date))}><Plus size={16}/> Nova tarefa</button>
-      </div>
+      <button className="primary" aria-label={`Nova tarefa para ${fullDate.format(date)}`} onClick={() => onNew(isoDate(date))}><Plus size={16}/> Nova tarefa</button>
     </header>
-    <div className="agenda-viewbar" role="group" aria-label="Exibição do calendário">
-      {(Object.keys(views) as Mode[]).map(view =>
-        <button key={view} aria-pressed={view === mode} onClick={() => setMode(view)}>{views[view]}</button>
-      )}
+    <div className="page-toolbar">
+      <div className="agenda-viewbar" role="group" aria-label="Exibição do calendário">
+        {(Object.keys(views) as Mode[]).map(view =>
+          <button key={view} aria-pressed={view === mode} onClick={() => setMode(view)}>{views[view]}</button>
+        )}
+      </div>
+      <div className="agenda-navigation" role="group" aria-label="Navegação do calendário">
+        <button className="icon-button soft" aria-label="Período anterior" onClick={() => navigate(-1)}><ChevronLeft size={17}/></button>
+        <button className="today-btn" onClick={() => setDate(new Date())}>Hoje</button>
+        <button className="icon-button soft" aria-label="Próximo período" onClick={() => navigate(1)}><ChevronRight size={17}/></button>
+      </div>
     </div>
     {mode === 'month'
       ? <MonthAgenda days={days} today={today} onOpenDay={openDay} onEdit={onEdit} onEditHabit={onEditHabit}/>
