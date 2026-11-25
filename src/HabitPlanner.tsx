@@ -56,36 +56,50 @@ export function HabitPlanner({ habits, logs, icons, onLog, onNew, onEdit }: Prop
     </li>
   }
 
+  const dayStats = (day: Date) => {
+    const iso = isoDate(day)
+    const planned = habits.filter(habit => habitOccursOn(habit, day)).length
+    const doneCount = logs.filter(log => log.log_date === iso && log.completed).length
+    return { planned, doneCount }
+  }
+  const pct = scheduled.length ? Math.round(completed / scheduled.length * 100) : 0
+
   return <section className="habit-planner" aria-label="Hábitos">
     <header className="page-head">
-      <div><h1>Hábitos</h1><p>{longDate.format(date)}</p></div>
+      <div><p className="eyebrow">hábitos</p><h1>{longDate.format(date)}</h1><p>{scheduled.length} {scheduled.length === 1 ? 'hábito previsto' : 'hábitos previstos'} · {completed} {completed === 1 ? 'concluído' : 'concluídos'}</p></div>
       <button className="primary" onClick={onNew}><Plus size={16}/> Novo hábito</button>
     </header>
-    <div className="habit-planner-week">
-      <div className="habit-planner-week-header">
-        <span>{shortDate.format(week[0])} – {shortDate.format(week[6])}</span>
-        <div className="agenda-navigation" role="group" aria-label="Navegação da semana">
-          <button className="icon-button soft" aria-label="Semana anterior" onClick={() => setDate(addDays(date, -7))}><ChevronLeft size={17}/></button>
-          <button className="today-btn" onClick={() => setDate(new Date())}>Hoje</button>
-          <button className="icon-button soft" aria-label="Próxima semana" onClick={() => setDate(addDays(date, 7))}><ChevronRight size={17}/></button>
-        </div>
+    <div className="page-toolbar">
+      <span className="toolbar-label">{shortDate.format(week[0])} – {shortDate.format(week[6])}</span>
+      <div className="agenda-navigation" role="group" aria-label="Navegação da semana">
+        <button className="icon-button soft" aria-label="Semana anterior" onClick={() => setDate(addDays(date, -7))}><ChevronLeft size={17}/></button>
+        <button className="today-btn" onClick={() => setDate(new Date())}>Hoje</button>
+        <button className="icon-button soft" aria-label="Próxima semana" onClick={() => setDate(addDays(date, 7))}><ChevronRight size={17}/></button>
       </div>
-      <div className="habit-planner-days" role="group" aria-label="Dias da semana">
-        {week.map((day, index) => <button key={isoDate(day)} aria-pressed={isoDate(day) === key} aria-current={isoDate(day) === today ? 'date' : undefined} aria-label={longDate.format(day)} onClick={() => setDate(day)}>
-          <span>{habitWeekdays[index]}</span><b>{day.getDate()}</b>
-        </button>)}
-      </div>
-      {scheduled.length > 0 && <div className="habit-planner-status">
-        <span aria-live="polite">{completed} de {scheduled.length} concluídos</span>
-        <progress value={completed} max={scheduled.length} aria-label="Hábitos concluídos"/>
-      </div>}
     </div>
-    {!scheduled.length && <p className="habit-planner-empty">{habits.length ? 'Nenhum hábito previsto para este dia.' : 'Crie um hábito para começar a acompanhar sua rotina.'}</p>}
-    {!!timed.length && <section className="habit-planner-group"><h2>Com horário</h2><ul>{timed.map(habit => row(habit))}</ul></section>}
-    {!!flexible.length && <section className="habit-planner-group"><h2>Sem horário</h2><ul>{flexible.map(habit => row(habit))}</ul></section>}
-    {!!other.length && <details className="habit-planner-group">
-      <summary>Outros hábitos <span>{other.length}</span></summary>
-      <ul>{other.map(habit => row(habit, false))}</ul>
-    </details>}
+    <div className="habit-planner-days" role="group" aria-label="Dias da semana">
+      {week.map((day, index) => { const st = dayStats(day); return <button key={isoDate(day)} aria-pressed={isoDate(day) === key} aria-current={isoDate(day) === today ? 'date' : undefined} aria-label={longDate.format(day)} onClick={() => setDate(day)}>
+        <span>{habitWeekdays[index]}</span><b>{day.getDate()}</b><small>{isoDate(day) > today ? <>{st.planned}<span className="hide-sm"> previstos</span></> : `${Math.min(st.doneCount, st.planned || st.doneCount)}/${st.planned}`}</small>
+      </button> })}
+    </div>
+    <div className="habit-layout">
+      <div className="habit-main">
+        {!scheduled.length && <p className="habit-planner-empty">{habits.length ? 'Nenhum hábito previsto para este dia.' : 'Crie um hábito para começar a acompanhar sua rotina.'}</p>}
+        {!!timed.length && <section className="habit-planner-group"><h2>Com horário</h2><ul>{timed.map(habit => row(habit))}</ul></section>}
+        {!!flexible.length && <section className="habit-planner-group"><h2>Sem horário</h2><ul>{flexible.map(habit => row(habit))}</ul></section>}
+      </div>
+      <aside className="habit-side">
+        <section className="panel habit-progress-card">
+          <div className="section-title"><div><h2>progresso do dia</h2><p>{key === today ? 'hoje' : shortDate.format(date)}</p></div></div>
+          <strong className="habit-big">{completed}<span>/{scheduled.length}</span></strong>
+          <progress value={completed} max={Math.max(scheduled.length, 1)} aria-label="Hábitos concluídos"/>
+          <p aria-live="polite">{pct}% dos hábitos previstos</p>
+        </section>
+        {!!other.length && <section className="panel soft habit-other">
+          <div className="section-title"><div><h2>outros hábitos</h2><p>não previstos para este dia</p></div></div>
+          <ul>{other.map(habit => row(habit, false))}</ul>
+        </section>}
+      </aside>
+    </div>
   </section>
 }

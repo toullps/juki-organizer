@@ -1,0 +1,244 @@
+/* juki° — layout. Carregado por último: só posição, tamanho e ritmo.
+   Uma moldura (1200px), uma grade de 12 colunas, um cabeçalho e uma barra
+   de ferramentas iguais em todas as telas. Cores e tipografia: theme-2027.css. */
+
+:root { --gap: 24px; --block: 32px; --frame: 1200px; }
+
+/* ——— moldura ——— */
+.content { width: 100%; max-width: calc(var(--frame) + 2 * clamp(20px, 4vw, 48px)); margin: 0 auto; padding: 28px clamp(20px, 4vw, 48px) 80px; box-sizing: border-box; }
+.habit-planner, .fin-page, .notes-page, .tasks-view, .agenda, .dash, .capture-page { width: 100%; max-width: none; margin: 0; }
+
+/* ——— cabeçalho de página ——— */
+.content .page-head, .content .agenda-toolbar.page-head {
+  display: flex; flex-direction: row; align-items: flex-end; justify-content: space-between; gap: var(--gap);
+  margin: 0; padding: 0 0 18px; border-bottom: 1px solid var(--line); }
+.content .page-head > div { min-width: 0; }
+.content .page-head .eyebrow { margin: 0 0 8px; }
+.content .page-head h1 { margin: 0 0 8px; }
+.content .page-head h1::first-letter { text-transform: uppercase; }
+.content .page-head > div > p:last-child:not(.eyebrow) { margin: 0; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.content .page-head > .primary { flex: none; margin-bottom: 4px; }
+
+/* ——— barra de ferramentas ——— */
+.page-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 60px; margin: 0 0 var(--gap); padding: 10px 0; border-bottom: 1px solid var(--line-soft); }
+.page-toolbar .toolbar-label { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-soft); }
+.page-toolbar .agenda-navigation { display: flex; align-items: center; gap: 6px; }
+.page-toolbar label, .page-toolbar .toolbar-field { display: flex; align-items: center; gap: 10px; margin: 0; }
+.page-toolbar select, .page-toolbar input { width: auto; min-width: 150px; min-height: 38px; padding: 6px 10px; font-size: 14px; }
+
+/* ——— painéis e títulos de seção ——— */
+.content .panel { padding: 22px 24px; margin: 0; }
+.content .section-title { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.content .section-title > div { min-width: 0; }
+
+/* ===================== início ===================== */
+.content .dash .welcome { padding: 36px 28px 30px; margin: 0 0 var(--gap); border-radius: 320px 320px 0 0 / 110px 110px 0 0; }
+.content .dash .welcome::after { content: none; }
+.content .dash .welcome h1 { font-size: clamp(56px, 6vw, 84px); }
+.content .dash .welcome .hero-actions { margin-top: 18px; }
+.dash-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap); align-items: stretch; margin-bottom: var(--gap); }
+.dash-agenda { grid-column: span 8; }
+.dash-side { grid-column: span 4; display: grid; grid-template-rows: auto 1fr; gap: var(--gap); min-width: 0; }
+.content .dash .stats-grid { grid-template-columns: 1fr 1fr; margin: 0; border-top: 1px solid var(--line); }
+.content .dash .stats-grid .stat-card:nth-child(n) { flex-direction: row; align-items: center; gap: 12px; min-height: 0; padding: 14px 16px; border-left: 1px solid var(--line); border-top: 0; }
+.content .dash .stats-grid .stat-card:nth-child(odd) { border-left: 0; }
+.content .dash .stats-grid .stat-card:nth-child(n+3) { border-top: 1px solid var(--line); }
+.content .dash .stat-icon { width: 34px; height: 34px; }
+.content .dash .stat-icon svg { width: 16px; height: 16px; }
+.content .dash .stats-grid .stat-card strong { font-size: 28px; }
+.content .dash .stat-copy > span { font-size: 9.5px; letter-spacing: .16em; }
+.dash-habits { min-width: 0; }
+.dash-habits .card-stack { gap: 0; border: 1px solid var(--line); background: #fff; }
+.content .dash-habits .card-stack .habit-mini { padding: 10px 12px; gap: 10px; border: 0; border-top: 1px solid var(--line-soft); }
+.content .dash-habits .card-stack .habit-mini:first-child { border-top: 0; }
+.dash-habits .habit-icon { width: 34px; height: 34px; }
+.dash-habits .habit-mini b { font-size: 16px; }
+.dash-agenda .day-timeline { margin-top: 4px; }
+.dash-agenda .untimed:first-child { margin-top: 0; border-top: 0; padding-top: 0; }
+
+.dash-week .week-cols { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); border: 1px solid var(--line); }
+.week-col { min-width: 0; border-left: 1px solid var(--line); background: #fff; }
+.week-col:first-child { border-left: 0; }
+.week-col.is-today { background: var(--pink-2); }
+.week-col.is-past { background: #faf8f9; }
+.week-col.is-past .week-col-head, .week-col.is-past li { opacity: .55; }
+.week-col-head { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.week-col.is-today .week-col-head { background: var(--char); color: #fff; }
+.week-col-head span { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; }
+.week-col-head b { font-family: var(--serif); font-size: 24px; font-weight: 500; line-height: 1; }
+.week-col.is-today .week-col-head b { color: var(--pink); }
+.week-col ul { display: grid; gap: 6px; margin: 0; padding: 10px 12px 14px; list-style: none; }
+.week-col li { display: grid; gap: 1px; font-family: var(--serif); font-size: 15px; line-height: 1.25; overflow-wrap: anywhere; }
+.week-col li time { font-family: var(--font-ui); font-size: 11px; color: var(--accent-text); font-variant-numeric: tabular-nums; }
+.week-col li.quiet { font-family: var(--font-ui); font-size: 12px; color: var(--muted); }
+
+/* ===================== tarefas ===================== */
+.tasks-view .page-toolbar .task-periods { display: flex; gap: 4px; margin: 0; padding: 0; border: 0; overflow-x: auto; }
+.tasks-view .task-periods button { padding: 8px 14px; }
+.tasks-view .task-filters { display: flex; gap: 12px; margin: 0; }
+.tasks-view .task-filters label { flex: none; }
+.tasks-view .mobile-only { display: none; }
+.content .tasks-layout { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap); align-items: start; }
+.tasks-layout .task-categories { grid-column: span 3; position: sticky; top: 90px; padding-right: 16px; }
+.tasks-layout .task-categories h2 { margin: 0 0 10px; padding: 0 10px; font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-soft); }
+.tasks-layout .task-categories button { padding: 10px; font-size: 14px; }
+.tasks-layout .task-categories button.selected { background: var(--pink); color: var(--ink); }
+.tasks-layout .tasks-main { grid-column: span 9; }
+.task-list { padding-top: 6px; }
+.content .task-list .task-group { margin: 0; padding: 0; border: 0; background: transparent; }
+.content .task-list .task-group + .task-group { margin-top: 18px; }
+.task-list .task-group-heading { padding: 12px 0 10px; }
+.task-list .plain-task { padding: 14px 0; border-bottom: 1px solid var(--line-soft); }
+.task-list .plain-task:last-child { border-bottom: 0; }
+.task-list .task-add { margin-top: 14px; padding: 12px 0 0; border-top: 1px solid var(--line); width: 100%; justify-content: flex-start; }
+.tasks-view .tasks-empty { padding: 32px 0; text-align: center; }
+
+/* ===================== hábitos ===================== */
+.content .habit-planner-days { margin: 0 0 var(--gap); }
+.habit-planner-days button { min-height: 86px; gap: 4px; }
+.habit-planner-days button small { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.habit-planner-days button[aria-pressed="true"] small { color: var(--accent-text); }
+.habit-layout { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap); align-items: start; }
+.habit-main { grid-column: span 8; display: grid; gap: var(--block); min-width: 0; }
+.habit-side { grid-column: span 4; display: grid; gap: var(--gap); min-width: 0; }
+.content .habit-planner-group { margin: 0; }
+.content .habit-planner-group h2 { margin: 0 0 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.content .habit-planner-group ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.content .habit-planner-row { margin: 0; }
+.habit-progress-card .habit-big { display: block; margin: 6px 0 12px; font-family: var(--serif); font-size: 72px; font-weight: 400; line-height: 1; }
+.habit-progress-card .habit-big span { font-size: 36px; color: var(--muted); }
+.habit-progress-card progress { width: 100%; height: 6px; appearance: none; border: 0; background: var(--line-soft); }
+.habit-progress-card progress::-webkit-progress-bar { background: var(--line-soft); }
+.habit-progress-card progress::-webkit-progress-value { background: var(--accent); }
+.habit-progress-card progress::-moz-progress-bar { background: var(--accent); }
+.habit-progress-card > p { margin: 10px 0 0; font-size: 12px; letter-spacing: .06em; color: var(--muted); }
+.habit-other ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.habit-other .habit-planner-row { padding: 10px 12px; }
+.habit-other .habit-planner-copy b { font-size: 16px; }
+
+/* ===================== agenda ===================== */
+.content .agenda-toolbar.page-head h1 { font-size: clamp(44px, 4.6vw, 64px); }
+.agenda .page-toolbar .agenda-viewbar { display: flex; gap: 4px; margin: 0; padding: 0; border: 0; border-radius: 0; }
+.agenda .page-toolbar .agenda-viewbar button { min-height: 38px; padding: 0 14px; }
+
+/* ===================== projetos ===================== */
+.content .project-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: var(--gap); }
+.content .project-card { display: grid; grid-template-rows: auto auto 1fr; gap: 16px; padding: 22px 24px; border-top: 0; }
+.content .project-card:nth-child(3n+1) { border-left: 0; }
+.content .project-card:nth-child(n+4) { border-top: 1px solid var(--line); }
+.project-card header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.project-card header h3 { margin: 0; }
+.project-count { font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.project-progress { display: grid; gap: 6px; }
+.project-progress .progress { height: 4px; background: var(--line-soft); }
+.project-progress .progress i { display: block; height: 100%; background: var(--accent); }
+.project-progress small { font-size: 12px; color: var(--muted); }
+.project-next { display: grid; gap: 8px; align-content: start; margin: 0; padding: 0; list-style: none; }
+.project-next li { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-family: var(--serif); font-size: 16px; }
+.project-next li small { font-family: var(--font-ui); font-size: 11px; color: var(--muted); white-space: nowrap; }
+.project-next li.quiet { font-family: var(--font-ui); font-size: 13px; color: var(--muted); }
+
+/* ===================== finanças ===================== */
+.content .fin-toolbar { margin: 0 0 var(--gap); }
+.content .fin-summary { margin: 0 0 var(--gap); }
+.content .fin-summary article { min-height: 0; padding: 18px 20px; gap: 18px; }
+.content .fin-columns { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap); align-items: start; }
+.fin-columns > .panel:first-child { grid-column: span 8; }
+.fin-columns > .panel:last-child { grid-column: span 4; }
+.fin-columns .section-title .eyebrow { margin: 0; }
+.content .fin-footnote { margin-top: var(--gap); }
+
+/* ===================== caderno ===================== */
+.content .notes-layout { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap); align-items: start; margin-top: var(--gap); }
+.notes-layout .notes-list { grid-column: span 4; min-height: 0; }
+.notes-layout .notes-editor { grid-column: span 8; display: grid; gap: 16px; padding: 28px 32px; }
+.note-head { display: flex; align-items: flex-end; gap: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.content .note-head .note-title { flex: 1; min-width: 0; padding: 0; border: 0; background: transparent; font-family: var(--serif); font-size: 34px; line-height: 1.15; outline-offset: 4px; }
+.content .note-head .note-date { flex: none; width: auto; min-width: 0; padding: 4px 8px; font-size: 13px; }
+.content .notes-editor .note-body { min-height: 420px; padding: 0; border: 0; background-color: transparent; font-family: var(--serif); font-size: 18px; }
+.notes-editor .notes-actions { justify-content: flex-end; padding-top: 12px; border-top: 1px solid var(--line); }
+
+/* ===================== capturar ===================== */
+.capture-page { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gap); padding-top: 40px; }
+.content .capture-page .capture-card { grid-column: 3 / span 8; padding: 40px 48px; }
+.capture-card .capture-actions { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px; }
+.capture-card .capture-actions small { font-size: 12px; color: var(--muted); text-align: left; }
+.content .capture-card textarea { min-height: 180px; margin-top: 18px; font-size: 16px; }
+
+/* ===================== telas médias ===================== */
+@media (max-width: 1100px) {
+  .dash-agenda, .dash-side { grid-column: 1 / -1; }
+  .dash-side { grid-template-columns: 1fr 1fr; grid-template-rows: none; align-items: start; }
+  .habit-main, .habit-side { grid-column: 1 / -1; }
+  .habit-side { grid-template-columns: 1fr 1fr; align-items: start; }
+  .fin-columns > .panel:first-child, .fin-columns > .panel:last-child { grid-column: 1 / -1; }
+  .content .project-grid { grid-template-columns: 1fr 1fr; }
+  .content .project-card:nth-child(n) { border-left: 1px solid var(--line); border-top: 1px solid var(--line); }
+  .content .project-card:nth-child(odd) { border-left: 0; }
+  .content .project-card:nth-child(-n+2) { border-top: 0; }
+  .content .capture-page .capture-card { grid-column: 1 / -1; }
+}
+@media (max-width: 1000px) {
+  .tasks-layout .task-categories { display: none; }
+  .tasks-layout .tasks-main { grid-column: 1 / -1; }
+  .tasks-view .mobile-only { display: flex; }
+  .tasks-view .page-toolbar { flex-wrap: wrap; }
+}
+
+/* ===================== celular ===================== */
+@media (max-width: 700px) {
+  :root { --gap: 16px; --block: 24px; }
+  .content { padding: 16px 16px 120px; }
+  .content .page-head, .content .agenda-toolbar.page-head { flex-direction: column; align-items: stretch; gap: 14px; }
+  .content .page-head > .primary { width: 100%; justify-content: center; }
+  .page-toolbar { flex-wrap: wrap; min-height: 0; }
+  .tasks-view .task-filters { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+  .tasks-view .task-filters label { display: grid; gap: 4px; }
+  .tasks-view .task-filters label.mobile-only { grid-column: 1 / -1; }
+  .page-toolbar select, .page-toolbar input { width: 100%; min-width: 0; }
+
+  .content .dash .welcome { padding: 32px 16px 22px; border-radius: 200px 200px 0 0 / 80px 80px 0 0; }
+  .content .dash .welcome h1 { font-size: 56px; }
+  .dash-side { grid-template-columns: 1fr; }
+  .dash-week .week-cols { grid-template-columns: repeat(7, 150px); overflow-x: auto; }
+  .dash-week { overflow: hidden; }
+  .dash-week .week-cols { scroll-snap-type: x mandatory; }
+  .week-col { scroll-snap-align: start; }
+
+  .habit-planner-days button { min-height: 72px; padding: 4px 2px; }
+  .habit-planner-days button small { font-size: 9px; }
+  .habit-side { grid-template-columns: 1fr; }
+
+  .content .project-grid { grid-template-columns: 1fr; }
+  .content .project-card:nth-child(n) { border-left: 0; border-top: 1px solid var(--line); }
+  .content .project-card:first-child { border-top: 0; }
+
+  .content .fin-summary { grid-template-columns: 1fr 1fr; }
+  .content .fin-summary article:nth-child(n) { border-left: 0; }
+  .content .fin-summary article:nth-child(2) { border-left: 1px solid var(--line); }
+  .content .fin-summary .fin-net { grid-column: 1 / -1; border-top: 1px solid var(--line); }
+
+  .notes-layout .notes-list, .notes-layout .notes-editor { grid-column: 1 / -1; }
+  .notes-layout .notes-editor { padding: 20px; }
+  .note-head { flex-direction: column; align-items: stretch; }
+  .content .note-head .note-title { font-size: 28px; }
+
+  .capture-page { padding-top: 0; }
+  .content .capture-page .capture-card { padding: 28px 20px; }
+  .capture-card .capture-actions { flex-direction: column; align-items: stretch; }
+  .capture-card h1 { font-size: 48px; }
+}
+
+/* ajustes finos */
+@media (min-width: 701px) { .tasks-view .page-toolbar .task-periods { -webkit-mask-image: none; mask-image: none; } }
+.fin-columns > .panel:last-child .section-title .text-button { display: none; }
+.fin-columns > .panel:last-child .fin-transactions > :first-child { border-top: 0; }
+.content .fin-debt-bottom { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.content .fin-debt-bottom .text-button { padding: 0; white-space: nowrap; }
+@media (max-width: 700px) { .hide-sm { display: none; } }
+
+/* bordas suaves: cinza rosado no lugar do preto */
+:root, .app-shell { --line: #e4d9de; --line-soft: #efe7eb; --line-strong: #d6c9cf; }
+/* controles redondos e pontos continuam legíveis */
+.check, .task-complete, .round-done, .add-progress, .habit-planner-row-actions button, .habit-mark, .stat-icon, .tl-dot, .modal-head .icon-button, .habit-close, .fin-type { border-color: #c9bcc2; }
+.content .page-head { border-bottom-color: #d6c9cf; }
