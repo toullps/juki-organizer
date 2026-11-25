@@ -3,7 +3,7 @@ import { useState } from 'react'
 const appearances = [
   { id: 'rose', label: 'Rosa chá', color: '#e9a6bb' },
   { id: 'blush', label: 'Rosa bebê', color: '#f2c6dd' },
-  { id: 'coral', label: 'Coral', color: '#c34237' },
+  { id: 'coral', label: 'Pink (padrão)', color: '#e83d72' },
 ] as const
 
 export type Accent = typeof appearances[number]['id']
