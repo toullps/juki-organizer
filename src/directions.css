@@ -1,0 +1,133 @@
+/* Prévia de direções visuais: ative com ?dir=noite | ?dir=pastel | ?dir=brutal */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Space+Grotesk:wght@400;500;700&display=swap');
+
+/* ============ 1. NOITE — escuro, coral luminoso ============ */
+html[data-dir="noite"], html[data-dir="noite"] .app-shell {
+  color-scheme: dark;
+  --canvas: #0f0e0d; --sidebar: #0f0e0d; --surface: #181614; --surface-soft: #211e1b; --surface-hover: #2a2622;
+  --ink: #f4eee7; --ink-soft: #d3cbc1; --muted: #9c9288; --line: #2b2723; --line-strong: #3a352f;
+  --accent: #ff7a59; --accent-hover: #ff9576; --accent-text: #ff9a7e; --accent-soft: rgba(255, 122, 89, .14);
+  --accent-fill: #ff7a59; --accent-fill-hover: #ff9576; --accent-ink: #1a0f0a;
+  --shadow: 0 0 0 1px #2b2723, 0 20px 60px rgba(0, 0, 0, .45);
+}
+html[data-dir="noite"] body, html[data-dir="noite"] #root { background: var(--canvas); color: var(--ink); }
+html[data-dir="noite"] .main { background: var(--surface); border-color: var(--line); }
+html[data-dir="noite"] .topbar { background: rgba(24, 22, 20, .9); }
+html[data-dir="noite"] .search, html[data-dir="noite"] .search input { color: var(--ink); }
+html[data-dir="noite"] .welcome h1 { font-family: var(--font-ui); font-weight: 600; letter-spacing: -.055em; font-size: clamp(46px, 5.4vw, 72px); }
+html[data-dir="noite"] .welcome h1 em { font-family: var(--font-display); font-weight: 400; letter-spacing: -.02em;
+  background: linear-gradient(90deg, #ff7a59, #ffb38a); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; }
+html[data-dir="noite"] .stats-grid .stat-card { background: var(--surface-soft); border-color: var(--line); }
+html[data-dir="noite"] .stats-grid .stat-card strong { font-family: var(--font-ui); font-weight: 600; font-size: 40px; letter-spacing: -.05em; color: var(--ink); }
+html[data-dir="noite"] .stats-grid .stat-card.overdue-alert { background: linear-gradient(160deg, rgba(255,122,89,.22), rgba(255,122,89,.06)); border-color: rgba(255,122,89,.35); }
+html[data-dir="noite"] .stats-grid .stat-card.overdue-alert strong { color: var(--accent-text); }
+html[data-dir="noite"] .panel, html[data-dir="noite"] .up-day { background: var(--surface-soft); border-color: var(--line); }
+html[data-dir="noite"] .up-day { background: transparent; }
+html[data-dir="noite"] .check, html[data-dir="noite"] .round-done, html[data-dir="noite"] .add-progress { background: transparent; border-color: var(--line-strong); color: var(--ink); }
+html[data-dir="noite"] .habit-icon { background: var(--surface-hover); color: var(--ink-soft); }
+html[data-dir="noite"] .progress { background: var(--surface-hover); }
+html[data-dir="noite"] .progress i { background: linear-gradient(90deg, #ff7a59, #ffb38a); }
+html[data-dir="noite"] .side-button { color: var(--muted); }
+html[data-dir="noite"] .side-button:hover { background: var(--surface-soft); color: var(--ink); }
+html[data-dir="noite"] .side-button.active { background: var(--surface); color: var(--ink); box-shadow: 0 0 0 1px var(--line); }
+html[data-dir="noite"] .ghost, html[data-dir="noite"] .top-actions .icon-button { background: transparent; border-color: var(--line-strong); color: var(--ink); }
+html[data-dir="noite"] .primary { box-shadow: 0 0 24px rgba(255, 122, 89, .35); }
+html[data-dir="noite"] .avatar { background: var(--accent-soft); color: var(--accent-text); }
+html[data-dir="noite"] .mobile-nav { background: rgba(24, 22, 20, .94); border-color: var(--line); }
+
+/* ============ 2. PASTEL — bento colorido e divertido ============ */
+html[data-dir="pastel"], html[data-dir="pastel"] .app-shell {
+  --canvas: #fff7ee; --sidebar: #fff7ee; --surface: #ffffff; --surface-soft: #fff7ee; --surface-hover: #ffeedd;
+  --ink: #1d1a1e; --ink-soft: #3d3840; --muted: #6f6670; --line: #f1e4d6; --line-strong: #e6d3c0;
+  --accent: #f0457a; --accent-hover: #d82e63; --accent-text: #c42358; --accent-soft: #ffe1ea;
+  --accent-fill: #1d1a1e; --accent-fill-hover: #3d3840; --accent-ink: #fff;
+  --font-ui: 'Bricolage Grotesque', 'Geist', sans-serif;
+  --r-md: 24px; --r-lg: 30px;
+  --pink: #ffd3e0; --butter: #ffefa8; --mint: #c8f0dc; --sky: #cfe4ff; --peach: #ffd9c2;
+}
+html[data-dir="pastel"] .main { border: 0; box-shadow: none; background: var(--canvas); }
+html[data-dir="pastel"] .topbar { background: rgba(255, 247, 238, .92); border-bottom: 0; }
+html[data-dir="pastel"] .search { background: #fff; border: 1.5px solid var(--line-strong); }
+html[data-dir="pastel"] .logo, html[data-dir="pastel"] .mobile-logo { font-family: var(--font-ui); font-weight: 800; letter-spacing: -.06em; }
+html[data-dir="pastel"] .side-button { font-weight: 500; border-radius: 16px; }
+html[data-dir="pastel"] .side-button.active { background: var(--pink); color: var(--ink); box-shadow: none; }
+html[data-dir="pastel"] .side-button.active svg { color: var(--ink); }
+html[data-dir="pastel"] .welcome h1 { font-family: var(--font-ui); font-weight: 800; letter-spacing: -.055em; font-size: clamp(50px, 6vw, 80px); line-height: .95; }
+html[data-dir="pastel"] .welcome h1 em { font-style: normal; color: var(--ink); background: var(--butter); padding: 0 .14em; border-radius: .18em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+html[data-dir="pastel"] .stats-grid { gap: 12px; }
+html[data-dir="pastel"] .stats-grid .stat-card { border: 0; min-height: 128px; }
+html[data-dir="pastel"] .stats-grid .stat-card:nth-child(1) { background: var(--sky); }
+html[data-dir="pastel"] .stats-grid .stat-card:nth-child(2) { background: var(--mint); }
+html[data-dir="pastel"] .stats-grid .stat-card:nth-child(3) { background: var(--butter); }
+html[data-dir="pastel"] .stats-grid .stat-card.overdue-alert { background: var(--pink); }
+html[data-dir="pastel"] .stats-grid .stat-card:nth-child(4) { background: var(--peach); }
+html[data-dir="pastel"] .stats-grid .stat-card .stat-top { color: var(--ink-soft); font-weight: 500; }
+html[data-dir="pastel"] .stats-grid .stat-card .stat-top svg { color: var(--ink); }
+html[data-dir="pastel"] .stats-grid .stat-card strong { font-family: var(--font-ui); font-weight: 800; font-size: 54px; letter-spacing: -.06em; color: var(--ink); }
+html[data-dir="pastel"] .panel { border: 0; background: #fff; box-shadow: 0 1px 0 var(--line); }
+html[data-dir="pastel"] .home-grid > .panel:nth-child(2) { background: #effaf4; }
+html[data-dir="pastel"] .home-grid > .panel.wide { background: #fffbe8; }
+html[data-dir="pastel"] .section-title h2 { font-weight: 700; font-size: 22px; letter-spacing: -.03em; }
+html[data-dir="pastel"] .text-button, html[data-dir="pastel"] .link-button { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+html[data-dir="pastel"] .check { border: 2px solid var(--ink); }
+html[data-dir="pastel"] .round-done { border: 2px solid var(--ink); }
+html[data-dir="pastel"] .round-done.done, html[data-dir="pastel"] .check.checked { background: var(--accent); border-color: var(--accent); }
+html[data-dir="pastel"] .habit-icon { border-radius: 16px; background: #fff; }
+html[data-dir="pastel"] .progress { height: 8px; background: rgba(29, 26, 30, .08); }
+html[data-dir="pastel"] .progress i { background: var(--accent); }
+html[data-dir="pastel"] .primary { box-shadow: none; }
+html[data-dir="pastel"] .ghost { border: 1.5px solid var(--ink); background: transparent; color: var(--ink); }
+html[data-dir="pastel"] .avatar { background: var(--butter); color: var(--ink); }
+html[data-dir="pastel"] .up-day { background: transparent; }
+html[data-dir="pastel"] .mobile-nav button.active { background: var(--pink); color: var(--ink); }
+
+/* ============ 3. BRUTAL — papel, tinta preta, laranja ============ */
+html[data-dir="brutal"], html[data-dir="brutal"] .app-shell {
+  --canvas: #efece4; --sidebar: #efece4; --surface: #fbfaf6; --surface-soft: #f5f2ea; --surface-hover: #e9e5da;
+  --ink: #111111; --ink-soft: #2b2b2b; --muted: #5c5a55; --line: #111111; --line-strong: #111111;
+  --accent: #ff4f00; --accent-hover: #e04500; --accent-text: #c23c00; --accent-soft: #ffe3d3;
+  --accent-fill: #ff4f00; --accent-fill-hover: #e04500; --accent-ink: #111;
+  --font-ui: 'Space Grotesk', 'Geist', sans-serif;
+  --r-sm: 4px; --r-md: 6px; --r-lg: 8px;
+  --hard: 4px 4px 0 #111;
+}
+html[data-dir="brutal"] .main { border: 2px solid #111; border-radius: 8px; box-shadow: var(--hard); margin: 12px 14px 14px 0; }
+html[data-dir="brutal"] .topbar { border-bottom: 2px solid #111; }
+html[data-dir="brutal"] .search { border-radius: 4px; border: 2px solid #111; background: #fff; }
+html[data-dir="brutal"] .logo, html[data-dir="brutal"] .mobile-logo { font-family: var(--font-ui); font-weight: 700; letter-spacing: -.08em; }
+html[data-dir="brutal"] .side-button { border-radius: 4px; font-weight: 500; }
+html[data-dir="brutal"] .side-button.active { background: #ffd400; color: #111; box-shadow: none; border: 2px solid #111; }
+html[data-dir="brutal"] .side-button.active svg { color: #111; }
+html[data-dir="brutal"] .eyebrow { font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; text-transform: uppercase; letter-spacing: .08em; color: #111; }
+html[data-dir="brutal"] .welcome h1 { font-family: var(--font-ui); font-weight: 700; text-transform: uppercase; letter-spacing: -.06em; font-size: clamp(46px, 6.4vw, 92px); line-height: .9; }
+html[data-dir="brutal"] .welcome h1 em { font-style: normal; color: #111; background: var(--accent); padding: 0 .08em; }
+html[data-dir="brutal"] .stats-grid .stat-card, html[data-dir="brutal"] .panel { border: 2px solid #111; border-radius: 6px; background: #fff; box-shadow: var(--hard); }
+html[data-dir="brutal"] .stats-grid .stat-card.overdue-alert { background: var(--accent); border-color: #111; }
+html[data-dir="brutal"] .stats-grid .stat-card.overdue-alert strong, html[data-dir="brutal"] .stats-grid .stat-card.overdue-alert .stat-top { color: #111; }
+html[data-dir="brutal"] .stats-grid .stat-card strong { font-family: var(--font-ui); font-weight: 700; font-size: 52px; letter-spacing: -.06em; }
+html[data-dir="brutal"] button.stat-card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #111; }
+html[data-dir="brutal"] .stat-top { color: #111; font-family: ui-monospace, Menlo, monospace; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+html[data-dir="brutal"] .section-title h2 { font-weight: 700; text-transform: uppercase; letter-spacing: -.02em; }
+html[data-dir="brutal"] .task-line { border-top: 1px dashed #111; }
+html[data-dir="brutal"] .check, html[data-dir="brutal"] .round-done, html[data-dir="brutal"] .add-progress { border: 2px solid #111; border-radius: 4px; }
+html[data-dir="brutal"] .habit-icon { border: 2px solid #111; border-radius: 4px; background: #ffd400; color: #111; }
+html[data-dir="brutal"] .progress { height: 8px; border: 1.5px solid #111; border-radius: 0; background: #fff; }
+html[data-dir="brutal"] .progress i { border-radius: 0; background: #111; }
+html[data-dir="brutal"] .primary, html[data-dir="brutal"] .ghost { border-radius: 4px; border: 2px solid #111; box-shadow: 3px 3px 0 #111; font-weight: 700; }
+html[data-dir="brutal"] .ghost { background: #fff; color: #111; }
+html[data-dir="brutal"] .primary:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #111; }
+html[data-dir="brutal"] .text-button { color: #111; text-decoration: underline; text-decoration-thickness: 2px; text-decoration-color: var(--accent); text-underline-offset: 4px; }
+html[data-dir="brutal"] .avatar { border: 2px solid #111; background: #ffd400; color: #111; }
+html[data-dir="brutal"] .top-actions .icon-button { border: 2px solid #111; border-radius: 4px; }
+html[data-dir="brutal"] .upcoming .up-day { border-right: 1px dashed #111; background: transparent; }
+html[data-dir="brutal"] .mobile-nav { border: 2px solid #111; border-radius: 6px; box-shadow: var(--hard); }
+@media (max-width: 700px) {
+  html[data-dir] .main { margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+  html[data-dir="brutal"] .welcome h1 { font-size: 46px; }
+  html[data-dir="pastel"] .welcome h1 { font-size: 48px; }
+}
+html[data-dir="pastel"] .welcome h1 { font-size: clamp(44px, 5vw, 66px); line-height: 1.05; }
+html[data-dir="pastel"] .welcome h1 em { white-space: nowrap; }
+html[data-dir="brutal"] .welcome h1 { font-size: clamp(42px, 5vw, 70px); line-height: 1.08; margin-top: 18px; }
+html[data-dir="brutal"] .welcome h1 em { white-space: nowrap; padding: 0 .1em; }
+html[data-dir="noite"] .logo, html[data-dir="noite"] .mobile-logo { font-family: var(--font-ui); font-weight: 700; letter-spacing: -.07em; }
