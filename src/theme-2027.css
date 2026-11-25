@@ -579,3 +579,146 @@ body { background-attachment: fixed; }
 .content .welcome { grid-template-columns: minmax(0, 1fr); grid-auto-flow: row; }
 .content .welcome .hero-actions { justify-content: center; }
 .content .welcome .hero-actions { justify-self: center; margin: 20px auto 0; }
+
+/* ===================================================================
+   Rosa & grafite editorial — demais telas
+   =================================================================== */
+html { background-color: var(--canvas, #f6f4f4); background-image: repeating-linear-gradient(90deg, transparent 0 46px, rgba(35,35,35,.045) 46px 47px); }
+body { background: transparent; }
+
+/* títulos de página em serifa, sobrelinha espaçada */
+.page-head h1, .calendar-toolbar h1, .agenda-toolbar h1, .habit-planner h1, .habits-title h1, .fin-heading h1 {
+  font-family: var(--serif); font-weight: 400; font-size: clamp(44px, 4.6vw, 64px); line-height: 1; letter-spacing: -.01em; text-transform: none; }
+.page-head h1::first-letter, .agenda-toolbar h1::first-letter { text-transform: uppercase; }
+.page-head h1 span, .fin-heading h1 span { color: var(--accent); }
+.page-head .eyebrow, .agenda-toolbar .eyebrow, .habit-planner .eyebrow, .page-head > div > p:first-child { font-size: 10.5px; letter-spacing: .28em; text-transform: uppercase; color: var(--accent-text); }
+.page-head p, .agenda-toolbar p { font-size: 13px; color: var(--muted); }
+.page-head { padding-bottom: 18px; margin-bottom: 22px; border-bottom: 1px solid var(--line); }
+.page-head .primary, .agenda-toolbar .primary, .habit-planner .primary { background: var(--char); color: #fff; }
+
+/* formulários: linha fina, cantos retos */
+:where(input:not([type=checkbox]):not([type=radio]):not([type=range]), select, textarea) { border-radius: 4px; border: 1px solid var(--line); background: #fff; }
+.task-filters select, .fin-toolbar input, .notes-editor input, .notes-editor textarea, .capture-card textarea { border-radius: 4px; border: 1px solid var(--line); }
+label, .task-filters label { font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* tarefas */
+.task-periods button { border-radius: 999px; border: 1px solid transparent; font-size: 13px; }
+.task-periods button.active, .task-periods button[aria-pressed="true"] { background: var(--char); color: #fff; }
+.task-periods button:hover { border-color: var(--line); }
+.task-categories { border-right: 1px solid var(--line); }
+.task-categories button { border-radius: 999px; }
+.task-categories button.active { background: var(--pink); color: var(--ink); }
+.task-category-label { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; }
+.task-group { border: 1px solid var(--line); border-radius: 0; background: #fff; padding: 4px 20px 8px; }
+.task-group-heading { border-bottom: 1px solid var(--line); }
+.task-group-heading h2 { font-family: var(--serif); font-size: 24px; font-weight: 500; letter-spacing: .02em; }
+.task-group-heading h2::first-letter { text-transform: uppercase; }
+.task-open b, .plain-task b, .task-open strong { font-family: var(--serif); font-size: 18px; font-weight: 500; }
+.task-complete { border-radius: 50%; }
+.task-status { border-radius: 999px; border: 1px solid currentColor; background: transparent; }
+.task-add { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+
+/* hábitos */
+.habit-planner-week { border: 1px solid var(--line); border-radius: 0; background: #fff; }
+.habit-planner-days { gap: 0; border: 1px solid var(--line); }
+.habit-planner-days button { border-radius: 0; background: #fff; border: 0; border-left: 1px solid var(--line); }
+.habit-planner-days button:first-child { border-left: 0; }
+.habit-planner-days button:hover { background: var(--pink-2); border-color: var(--line); }
+.habit-planner-days button[aria-pressed="true"], .habit-planner-days button.active, .habit-planner-days button[aria-current] { background: var(--pink); color: var(--ink); border: 0; border-left: 1px solid var(--line); }
+.habit-planner-days button span { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; }
+.habit-planner-days button b { font-family: var(--serif); font-size: 24px; font-weight: 500; }
+.habit-planner-days button[aria-current="date"] b { text-decoration: none; }
+.habit-planner-group h2 { font-family: var(--serif); font-size: 26px; font-weight: 400; text-transform: uppercase; letter-spacing: .04em; }
+.habit-planner-row { border: 1px solid var(--line); border-radius: 0; background: #fff; }
+.habit-planner-copy b, .habit-planner-copy strong { font-family: var(--serif); font-size: 19px; font-weight: 500; }
+.habit-planner-row-actions button { border-radius: 50%; border: 1px solid var(--line); }
+.habit-planner-row-actions button.habit-recorded, .habit-planner-row-actions button[aria-pressed="true"] { background: var(--char); border-color: var(--char); color: var(--pink); }
+.habit-mark { border-radius: 50%; border: 1px solid var(--line); background: var(--pink-2); }
+
+/* agenda */
+.agenda { --agenda-habit-ink: #4a4547; --agenda-habit-border: #cfc9cb; --agenda-habit-bg: #fff; }
+.agenda-viewbar button { border-radius: 0; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; }
+.agenda-viewbar button[aria-pressed="true"], .agenda-viewbar button.active { color: var(--accent-text); box-shadow: inset 0 -2px 0 var(--accent); }
+.agenda-timeline, .agenda-month { border: 1px solid var(--line); border-radius: 0; background: #fff; }
+.agenda-date span, .agenda-weekdays span { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; }
+.agenda-date b { font-family: var(--serif); font-size: 18px; font-weight: 500; }
+.agenda-date[aria-current="date"] b { background: var(--char); color: var(--pink); }
+.agenda-task { border-radius: 0; border: 1px solid var(--line); }
+.agenda-task.tone-pink, .agenda-task.tone-lavender { --task-bg: var(--pink); --task-ink: #6b2240; }
+.agenda-task.tone-peach, .agenda-task.tone-yellow { --task-bg: var(--pink-2); --task-ink: #6b2240; }
+.agenda-task.tone-blue, .agenda-task.tone-sage { --task-bg: #fff; --task-ink: var(--ink); }
+.agenda-task-title { font-family: var(--serif); font-size: 14px; font-weight: 600; }
+.agenda-habit { border-radius: 999px; }
+.agenda-habit.is-complete { background: var(--char); color: var(--pink); border-color: var(--char); }
+.agenda-hour-labels, .agenda-gutter { font-family: var(--serif); font-style: italic; }
+
+/* projetos */
+.project-grid { gap: 0; border: 1px solid var(--line); background: #fff; }
+.project-card { border: 0; border-left: 1px solid var(--line); border-radius: 0; background: #fff; }
+.project-card:first-child { border-left: 0; }
+.project-card:hover { background: var(--pink-2); }
+.project-card h3 { font-family: var(--serif); font-size: 26px; font-weight: 500; }
+.project-card p { font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase; }
+.project-dot { border: 1px solid var(--line); }
+.project-dot.pink, .project-dot.lavender { background: var(--accent); }
+.project-dot.peach, .project-dot.yellow { background: var(--pink); }
+.project-dot.blue, .project-dot.sage { background: var(--char); }
+.task-categories .project-dot, .task-categories i { border: 0; }
+
+/* finanças */
+.fin-summary { gap: 0; border: 1px solid var(--line); }
+.fin-summary article { border: 0; border-left: 1px solid var(--line); border-radius: 0; background: var(--pink-2); }
+.fin-summary article:first-child { border-left: 0; }
+.fin-summary article:nth-child(2) { background: var(--pink); }
+.fin-summary .fin-net { background: var(--char); }
+.fin-summary article small { font-size: 10.5px; letter-spacing: .2em; text-transform: uppercase; }
+.fin-summary article strong { font-family: var(--serif); font-weight: 500; letter-spacing: 0; }
+.fin-summary .fin-net strong { color: var(--pink); }
+.fin-type, .fin-type.income { border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--ink); }
+.fin-type.expense { background: var(--pink); color: var(--accent-text); }
+.fin-line b { font-family: var(--serif); font-size: 18px; font-weight: 500; }
+.fin-line > strong { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--ink); }
+.fin-line > strong.income, .fin-line .income { color: var(--ink); }
+.fin-debt b, .fin-debt strong { font-family: var(--serif); font-size: 18px; font-weight: 500; }
+
+/* caderno e captura */
+.notes-list { background: var(--pink-2); background-image: radial-gradient(rgba(217,87,127,.22) 1.3px, transparent 1.6px); background-size: 16px 16px; }
+.notes-list button { border-radius: 0; background: #fff; border: 1px solid var(--line); margin-bottom: 6px; }
+.notes-list button b, .notes-list button strong { font-family: var(--serif); font-size: 17px; font-weight: 500; }
+.notes-editor textarea { background-image: repeating-linear-gradient(transparent 0 27px, #f1dfe6 27px 28px); line-height: 28px; }
+.capture-card { border: 1px solid var(--line); border-radius: 0; background: var(--pink-2); background-image: radial-gradient(rgba(217,87,127,.22) 1.3px, transparent 1.6px); background-size: 16px 16px; text-align: center; }
+.capture-card .eyebrow { font-size: 10.5px; letter-spacing: .28em; text-transform: uppercase; color: var(--accent-text); }
+.capture-card h1 { font-family: var(--script); font-weight: 400; font-size: 64px; letter-spacing: 0; line-height: 1.1; }
+.capture-card textarea { background: #fff; text-align: left; }
+.capture-actions { justify-content: center; }
+
+/* modais */
+.modal, .habit-modal { border: 1px solid var(--line); border-radius: 0; box-shadow: 10px 10px 0 var(--pink); }
+.modal-head h2, .habit-modal-head h2 { font-family: var(--serif); font-size: 32px; font-weight: 400; letter-spacing: 0; }
+.modal-head h2::first-letter { text-transform: uppercase; }
+.modal-head .icon-button, .habit-close { border: 1px solid var(--line); border-radius: 50%; }
+.recurrence-box, fieldset { border: 1px solid var(--line); border-radius: 0; }
+.switch-row { border-radius: 0; background: var(--pink-2); }
+.appearance-option { border: 1px solid var(--line); border-radius: 0; }
+.appearance-option[aria-checked="true"], .appearance-option.active, .appearance-option:has(input:checked) { background: var(--pink); }
+.primary.full { background: var(--char); color: #fff; }
+
+/* login: arco grafite */
+.auth-wrap { background: transparent; }
+.auth-card { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 0; box-shadow: 10px 10px 0 var(--pink); padding-top: 150px; }
+.auth-card::before { content: ""; position: absolute; left: -1px; right: -1px; top: -1px; height: 120px; background: var(--char); border-radius: 0 0 50% 50% / 0 0 60px 60px; }
+.auth-card .brand-mark { position: absolute; top: 16px; left: 0; right: 0; text-align: center; font-family: var(--script); font-weight: 400; font-size: 64px; letter-spacing: 0; color: #fff; text-shadow: 2px 2px 0 var(--accent); }
+.auth-card .brand-mark span { font-family: var(--font-ui); font-size: .4em; color: var(--pink); vertical-align: top; text-shadow: none; }
+.auth-card h1 { font-family: var(--serif); font-weight: 400; font-size: 34px; letter-spacing: 0; text-align: center; }
+.auth-card .primary { background: var(--char); color: #fff; }
+label :where(input, select, textarea) { text-transform: none; letter-spacing: normal; font-size: 14px; }
+.search input, .search :where(input) { border: 0; background: transparent; outline-offset: 4px; }
+.task-open > span { font-family: var(--serif); font-size: 19px; font-weight: 500; }
+.fin-line strong.positive { color: var(--accent-text); }
+.agenda-toolbar .eyebrow, .agenda-toolbar > div > p:first-child { font-size: 10.5px; letter-spacing: .28em; text-transform: uppercase; color: var(--accent-text); }
+.appearance-option, .switch-row { text-transform: none; letter-spacing: 0; font-size: 14px; }
+@media (max-width: 700px) {
+  .project-card:nth-child(n) { border-left: 0; border-top: 1px solid var(--line); }
+  .project-card:first-child { border-top: 0; }
+}
