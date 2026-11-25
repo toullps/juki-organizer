@@ -236,3 +236,9 @@
 .content .fin-debt-bottom { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
 .content .fin-debt-bottom .text-button { padding: 0; white-space: nowrap; }
 @media (max-width: 700px) { .hide-sm { display: none; } }
+
+/* bordas suaves: cinza rosado no lugar do preto */
+:root, .app-shell { --line: #e4d9de; --line-soft: #efe7eb; --line-strong: #d6c9cf; }
+/* controles redondos e pontos continuam legíveis */
+.check, .task-complete, .round-done, .add-progress, .habit-planner-row-actions button, .habit-mark, .stat-icon, .tl-dot, .modal-head .icon-button, .habit-close, .fin-type { border-color: #c9bcc2; }
+.content .page-head { border-bottom-color: #d6c9cf; }
